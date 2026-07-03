@@ -16,21 +16,21 @@ The dataset contains both successful and failed demonstrations of the robotic ar
 
 **Failed Episodes (Reward = 0.0)**
 - **Episode 0**: Failed to reach target. [View JSON Data](data-instances/ep000/data/)
-  <br>
-  <video src="https://github.com/mehranr7/le-wm-fast-policy/raw/refs/heads/main/data-instances/ep000/video.mp4" controls width="300"></video>
+  
+  ![Episode 0](https://github.com/mehranr7/le-wm-fast-policy/raw/refs/heads/main/data-instances/ep000/video.mp4)
 
 - **Episode 1**: Failed to reach target. [View JSON Data](data-instances/ep001/data/)
-  <br>
-  <video src="https://github.com/mehranr7/le-wm-fast-policy/raw/refs/heads/main/data-instances/ep001/video.mp4" controls width="300"></video>
+  
+  ![Episode 1](https://github.com/mehranr7/le-wm-fast-policy/raw/refs/heads/main/data-instances/ep001/video.mp4)
 
 **Successful Episodes (Reward > 0.0)**
 - **Episode 7**: Successfully reached target. [View JSON Data](data-instances/ep007/data/)
-  <br>
-  <video src="https://github.com/mehranr7/le-wm-fast-policy/raw/refs/heads/main/data-instances/ep007/video.mp4" controls width="300"></video>
+  
+  ![Episode 7](https://github.com/mehranr7/le-wm-fast-policy/raw/refs/heads/main/data-instances/ep007/video.mp4)
 
 - **Episode 8**: Successfully reached target. [View JSON Data](data-instances/ep008/data/)
-  <br>
-  <video src="https://github.com/mehranr7/le-wm-fast-policy/raw/refs/heads/main/data-instances/ep008/video.mp4" controls width="300"></video>
+  
+  ![Episode 8](https://github.com/mehranr7/le-wm-fast-policy/raw/refs/heads/main/data-instances/ep008/video.mp4)
 
 ## Upcoming Implementations
 The following PyTorch modules are currently being implemented:
