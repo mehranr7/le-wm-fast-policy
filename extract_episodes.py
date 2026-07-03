@@ -4,11 +4,12 @@ import os
 import json
 import numpy as np
 from PIL import Image, ImageDraw
+import imageio
 import math
 import shutil
 
 h5_path = '/data/5pourghe/le-wm-v2/le-wm-storage/reacher.h5'
-base_out_dir = '/data/5pourghe/le-wm-v2/le-wm-storage/data-instances'
+base_out_dir = '/data/5pourghe/le-wm-v2/data-instances'
 
 # Clean up existing data-instances directory to start fresh
 if os.path.exists(base_out_dir):
@@ -81,13 +82,10 @@ keys_per_frame = [
 
 for ep_idx in target_episodes:
     # 1-indexed for naming, e.g. ep001
-    ep_name = f"ep{(ep_idx + 1):03d}"
+    ep_name = f"ep{(ep_idx):03d}"
     out_dir = os.path.join(base_out_dir, ep_name)
     data_dir = os.path.join(out_dir, "data")
-    img_dir = os.path.join(out_dir, "images")
-    
     os.makedirs(data_dir, exist_ok=True)
-    os.makedirs(img_dir, exist_ok=True)
     
     start_idx = int(ep_offsets[ep_idx])
     length = int(ep_lengths[ep_idx])
@@ -114,9 +112,8 @@ for ep_idx in target_episodes:
         img = draw_target(img, t_x, t_y)
         images_for_video.append(img)
         
-        # Save image (1-indexed formatting: f001.png)
-        frame_name = f"f{(i + 1):03d}"
-        img.save(os.path.join(img_dir, f"{frame_name}.png"))
+        # Data JSON Processing (1-indexed formatting: f001.json)
+        frame_name = f"f{(i):03d}"
         
         # Data JSON Processing
         frame_dict = {}
@@ -131,10 +128,10 @@ for ep_idx in target_episodes:
         with open(os.path.join(data_dir, f"{frame_name}.json"), "w") as jf:
             json.dump(frame_dict, jf, indent=4)
             
-    # Save Video
-    gif_path = os.path.join(out_dir, "video.gif")
-    images_for_video[0].save(
-        gif_path, save_all=True, append_images=images_for_video[1:], loop=0, duration=20
-    )
+    # Save Video as MP4 to completely prevent color distortion
+    video_path = os.path.join(out_dir, "video.mp4")
+    # Convert PIL Images back to numpy arrays for imageio
+    frames_for_video = [np.array(img) for img in images_for_video]
+    imageio.mimwrite(video_path, frames_for_video, fps=50)
 
 print("Extraction completely finished!")
