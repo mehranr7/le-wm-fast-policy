@@ -37,10 +37,19 @@ class VisualBCPolicy(nn.Module):
         self.encoder = nn.Sequential(*list(resnet.children())[:-1]) # Output is (Batch, 512, 1, 1)
         self.encoder_dim = 512
         
-        # 2. Policy Head (MLP)
-        # Input to MLP is the 512 image features + 2 target coordinates = 514
+        # 2. Target Expansion MLP (Sensor Fusion)
+        # Amplifies the 2 target coordinates into 64 robust features
+        self.target_mlp = nn.Sequential(
+            nn.Linear(2, 64),
+            nn.ReLU(),
+            nn.Linear(64, 64),
+            nn.ReLU()
+        )
+        
+        # 3. Policy Head (MLP)
+        # Input to MLP is the 512 image features + 64 amplified target features = 576
         self.mlp = nn.Sequential(
-            nn.Linear(self.encoder_dim + 2, 256),
+            nn.Linear(self.encoder_dim + 64, 256),
             nn.ReLU(),
             nn.Linear(256, 128),
             nn.ReLU(),
@@ -52,10 +61,13 @@ class VisualBCPolicy(nn.Module):
         img_features = self.encoder(img) # Shape: (Batch, 512, 1, 1)
         img_features = img_features.view(img_features.size(0), -1) # Flatten to (Batch, 512)
         
-        # 2. Concatenate the target position
-        concat_features = torch.cat([img_features, target_pos], dim=1) # Shape: (Batch, 514)
+        # 2. Expand target features
+        target_features = self.target_mlp(target_pos) # Shape: (Batch, 64)
         
-        # 3. Predict action
+        # 3. Concatenate the features
+        concat_features = torch.cat([img_features, target_features], dim=1) # Shape: (Batch, 576)
+        
+        # 4. Predict action
         action = self.mlp(concat_features) # Shape: (Batch, 2)
         
         return action
